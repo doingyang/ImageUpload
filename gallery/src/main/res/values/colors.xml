@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="rxpicker_colorPrimary">#000000</color>
+    <color name="rxpicker_colorPrimaryDark">#000000</color>
+    <color name="rxpicker_colorAccent">#FF4081</color>
+    <color name="rxpicker_width">#FFF</color>
+
+    <color name="galley_color_main">#4C515D</color>
+    <color name="galley_color_white">#FFFFFF</color>
+    <color name="galley_color_line">#A8B0BF</color>
+
+</resources>

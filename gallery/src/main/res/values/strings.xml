@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">gallery</string>
+
+    <string name="select_confirm" formatted="false">确定 (%d/%d)</string>
+    <string name="all_phone_album">所有照片</string>
+    <string name="max_select">最多选择%s张图片</string>
+    <string name="select_one_image">请选择照片</string>
+    <string name="min_image">请至少选择%d张照片</string>
+    <string name="permissions_error">获取权限失败</string>
+    <string name="load_image_error">获取图片失败</string>
+
+    <string name="galley_picture_preview">预览</string>
+    <string name="preview_confirm" formatted="false">预览(%d)</string>
+    <string name="galley_picture_use">使用(0/3)</string>
+    <string name="use_confirm" formatted="false">使用(%d/%d)</string>
+    <string name="galley_exit">取消</string>
+    <string name="text_confirm">确定</string>
+
+</resources>
