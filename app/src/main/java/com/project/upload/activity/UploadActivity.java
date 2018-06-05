@@ -33,18 +33,19 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * @author ydy
+ */
 public class UploadActivity extends AppCompatActivity {
 
-    private GridView gvImage;
     private Button btnSelect;
     private Button btnUpload;
 
+    private List<File> fileList = new ArrayList<>();
     private List<String> imageList = new ArrayList<>();
     private ImageAdapter adapter;
-    private String base64Data;
-    private String merchantId;
-    private String timeStamp;
-    private String md5Sign;
+
+    private Map<String, String> paramsMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,55 +57,40 @@ public class UploadActivity extends AppCompatActivity {
     }
 
     private void initData() {
-        timeStamp = String.valueOf((int) (System.currentTimeMillis() / 1000));
         String jsonStr = "{\"business_code\":\"img_upload\"}";
-        base64Data = Base64.encodeToString(jsonStr.getBytes(), Base64.NO_WRAP);
-        merchantId = "THINKIVEFILE";
+        String base64Data = Base64.encodeToString(jsonStr.getBytes(), Base64.NO_WRAP);
+        String merchantId = "THINKIVEFILE";
         String signKey = "53e079663bfe4f0bc4cb14f9a819e3d5";
+        String timeStamp = String.valueOf(System.currentTimeMillis());
         Map<String, String> map = new HashMap<>();
         map.put("data", base64Data);
         map.put("merchant_id", merchantId);
         map.put("signKey", signKey);
         map.put("timestamp", timeStamp);
+        //生成摘要
         String signPaper = SignUtil.getSignCheckAPIInterfaceContent(map);
-        md5Sign = MD5Util.md5Encode(signPaper, null);
-    }
-
-    public MultipartBody formMultipartBody(List<File> files) {
-        MultipartBody.Builder builder = new MultipartBody.Builder();
-        for (File file : files) {
-            RequestBody requestBody = RequestBody.create(MediaType.parse("image/png"), file);
-            builder.addFormDataPart("file", file.getName(), requestBody);
-        }
-        builder.setType(MultipartBody.FORM);
-        builder.addFormDataPart("data", base64Data);
-        builder.addFormDataPart("merchant_id", merchantId);
-        builder.addFormDataPart("sign", md5Sign);
-        builder.addFormDataPart("timestamp", timeStamp);
-        return builder.build();
+        //MD5签名
+        String md5Sign = MD5Util.md5Encode(signPaper, null);
+        //请求参数
+        paramsMap = new HashMap<>();
+        paramsMap.put("data", base64Data);
+        paramsMap.put("merchant_id", merchantId);
+        paramsMap.put("sign", md5Sign);
+        paramsMap.put("timestamp", timeStamp);
     }
 
     private void uploadImage() {
-        List<File> fileList = new ArrayList<>();
-        if (imageList.size() > 0) {
-            for (int i = 0; i < imageList.size(); i++) {
-                String path = imageList.get(i);
-                File file = new File(path);
-                if (file.exists()) {
-                    fileList.add(file);
-                }
-            }
-        }
-        MultipartBody body = formMultipartBody(fileList);
+        List<MultipartBody.Part> parts = HttpUtils.filesToMultipartBodyParts(fileList);
         HttpUtils
                 .fileUpload()
-                .uploadFileWithRequestBody(body)
+                .uploadFilesWithParts(parts, paramsMap)
                 .enqueue(new Callback<FileUploadResponse>() {
                     @Override
                     public void onResponse(Call<FileUploadResponse> call, Response<FileUploadResponse> response) {
                         if (response.isSuccessful()) {
-                            String resp = response.body().toString();
-                            Log.i("TAG", "onResponse: " + resp);
+                            FileUploadResponse resp = response.body();
+                            Log.i("TAG", "onResponse: 成功" + resp.getError_no());
+                            Log.i("TAG", "onResponse: 成功" + resp.getError_info());
                         } else {
                             Log.i("TAG", "onResponse: 失败");
                         }
@@ -112,7 +98,7 @@ public class UploadActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<FileUploadResponse> call, Throwable t) {
-                        Log.i("TAG", "onFailure: 网络...");
+                        Log.i("TAG", "onFailure: 连接失败");
                     }
                 });
     }
@@ -128,11 +114,13 @@ public class UploadActivity extends AppCompatActivity {
                 .subscribe(new Consumer<List<ImageItem>>() {
                     @Override
                     public void accept(@NonNull List<ImageItem> imageItems) throws Exception {
+                        fileList.clear();
                         imageList.clear();
                         for (ImageItem imageItem : imageItems) {
                             String path = imageItem.getPath();
                             File file = new File(path);
                             if (file.exists()) {
+                                fileList.add(file);
                                 imageList.add(path);
                             }
                         }
@@ -158,9 +146,9 @@ public class UploadActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        gvImage = (GridView) findViewById(R.id.gv_image);
         btnSelect = (Button) findViewById(R.id.btn_select);
         btnUpload = (Button) findViewById(R.id.btn_upload);
+        GridView gvImage = (GridView) findViewById(R.id.gv_image);
         adapter = new ImageAdapter(this, imageList);
         gvImage.setAdapter(adapter);
     }

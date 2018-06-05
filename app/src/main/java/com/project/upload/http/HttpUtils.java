@@ -13,30 +13,33 @@ import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
+/**
+ * @author ydy
+ */
 public class HttpUtils {
 
-    public static String URL_UPLOAD = "http://192.168.11.172:9901/servlet/file/SignUploadAction";
+    private static String URL_UPLOAD   = "http://192.168.11.172:9901/servlet/file/SignUploadAction";
     private static String URL_DOWNLOAD = "http://192.168.11.172:9901/tmp/file/unsafty";
 
-//    public static final String BASE_URL = "http://www.1688wan.com/";
     public static final String BASE_URL = "http://192.168.11.172:9901/";
+    public static final String BASE_URL2 = "http://www.1688wan.com/";
 
     private static HttpService mHttpService;
 
     public static HttpService init() {
         if (mHttpService == null) {
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
+                    .baseUrl(BASE_URL2)
                     //返回值为String的支持
                     .addConverterFactory(ScalarsConverterFactory.create())
                     //返回值为Gson的支持(以实体类返回)
                     .addConverterFactory(GsonConverterFactory.create())
-                    //返回值为Observable<ToastUtil>的支持
-                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                    //返回值为Observable<>的支持
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .build();
             mHttpService = retrofit.create(HttpService.class);
         }
@@ -44,19 +47,18 @@ public class HttpUtils {
     }
 
     //---------------------------------------------------------------------------------------------
+
     /**
      * 构造MultipartBody
      * 把File对象转化成MultipartBody
      * @param files 文件集合
      */
     public static MultipartBody filesToMultipartBody(List<File> files) {
-        MultipartBody.Builder builder = new MultipartBody.Builder();
+        MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
         for (File file : files) {
-            // TODO: 16-4-2  这里没有判断file的类型
             RequestBody requestBody = RequestBody.create(MediaType.parse("image/png"), file);
             builder.addFormDataPart("file", file.getName(), requestBody);
         }
-        builder.setType(MultipartBody.FORM);
         return builder.build();
     }
 
@@ -67,8 +69,7 @@ public class HttpUtils {
     public static List<MultipartBody.Part> filesToMultipartBodyParts(List<File> files) {
         List<MultipartBody.Part> parts = new ArrayList<>(files.size());
         for (File file : files) {
-            // TODO: 16-4-2  这里没有判断file的类型
-            RequestBody requestBody = RequestBody.create(MediaType.parse("image/png"), file);
+            RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"), file);
             MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
             parts.add(part);
         }
@@ -93,7 +94,7 @@ public class HttpUtils {
                     .client(client)
                     .baseUrl(BASE_URL)
                     .addConverterFactory(gsonConverterFactory)
-                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .build();
             mHttpService = retrofit.create(HttpService.class);
         }

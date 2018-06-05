@@ -24,6 +24,9 @@ import com.project.upload.mvp.view.IUserView;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author ydy
+ */
 public class MainActivity extends AppCompatActivity implements IUserView {
 
     private Button btnUpload;
@@ -53,7 +56,6 @@ public class MainActivity extends AppCompatActivity implements IUserView {
         });
         initData();
         initView();
-        getData();
     }
 
     /**
@@ -142,6 +144,12 @@ public class MainActivity extends AppCompatActivity implements IUserView {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getData();
+    }
+
     private void getData() {
         pager = 1;
         userPresenter.startLoad(pager);
@@ -149,8 +157,7 @@ public class MainActivity extends AppCompatActivity implements IUserView {
 
     @Override
     public void dataResult(GiftBean data) {
-        List<GiftBean.ListBean> dataList = data.getList();
-        Log.i("TAG", "dataResult: " + dataList.toString());
+
     }
 
 }
