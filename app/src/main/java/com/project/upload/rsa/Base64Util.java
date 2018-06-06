@@ -5,7 +5,7 @@ import java.io.UnsupportedEncodingException;
 /**
  * @author
  */
-public class Base64Utils {
+public class Base64Util {
 
     private static char[] base64EncodeChars = new char[]
             {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',

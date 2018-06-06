@@ -1,14 +1,14 @@
 package com.project.upload.activity;
 
-
 import com.google.gson.Gson;
+import com.project.upload.rsa.Base64Util;
+import com.project.upload.rsa.MD5Util;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Callback;
@@ -21,17 +21,14 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * Created by dltao on 2018/5/29.
- * okHttp图片上传工具类
+ * @author okHttp图片上传工具类
  */
-
 public class UploadHelper {
 
-    private static String url="http://192.168.11.172:9901/servlet/file/SignUploadAction";
+    private static String url = "http://192.168.11.172:9901/servlet/file/SignUploadAction";
+    private static String imgUrl = "http://192.168.11.172:9901/tmp/file/unsafty/";
 
-    private static String imgUrl="http://192.168.11.172:9901/tmp/file/unsafty/";
-
-    private static final OkHttpClient.Builder mHttpClientBuilder = new OkHttpClient.Builder();
+    private static final OkHttpClient.Builder HTTP_CLIENT_BUILDER = new OkHttpClient.Builder();
 
     /**
      * 图片上传方法
@@ -51,44 +48,38 @@ public class UploadHelper {
                 .post(multipartBody)
                 .build();
 
-        mHttpClientBuilder.connectTimeout(60, TimeUnit.SECONDS).addInterceptor(interceptor);
-        OkHttpClient okHttpClient = mHttpClientBuilder.build();
+        HTTP_CLIENT_BUILDER.connectTimeout(60, TimeUnit.SECONDS).addInterceptor(interceptor);
+        OkHttpClient okHttpClient = HTTP_CLIENT_BUILDER.build();
         okHttpClient.newCall(request).enqueue(callback);
     }
 
-    /***
+    /**
      * 需要传递的参数
-     * @return
      */
-    public static void  addParams(MultipartBody.Builder builder){
-        Map dataMap = new HashMap();
+    private static void addParams(MultipartBody.Builder builder) {
+        Map<String, String> dataMap = new HashMap();
         dataMap.put("business_code", "png_upload");
-//      dataMap.put("loginId", "admin");
-//      dataMap.put("password", "admin8888");
         //请求参数
-        String data=new Gson().toJson(dataMap);
+        String data = new Gson().toJson(dataMap);
         //转成base64字符串
-//        data= Base64Util.encode(data);
-        data= "";
-        System.out.println(data);
+        data = Base64Util.encode(data.getBytes());
         //时间戳
-        String timestamp=String.valueOf(System.currentTimeMillis());
+        String timestamp = String.valueOf(System.currentTimeMillis());
         //商户id
-        String merchant_id="THINKIVEFILE";
+        String merchant_id = "THINKIVEFILE";
         //签名参数
         //将参数拼接成签名字符串
-        String signStr ="data="+data
-                +"&merchant_id="+merchant_id
-                +"&signKey=53e079663bfe4f0bc4cb14f9a819e3d5"
-                +"&timestamp="+timestamp;
+        String signStr = "data=" + data
+                + "&merchant_id=" + merchant_id
+                + "&signKey=53e079663bfe4f0bc4cb14f9a819e3d5"
+                + "&timestamp=" + timestamp;
         //签名结果值
-//        String sign= MD5Util.getMD5String(signStr);
-        String sign= "";
+        String sign = MD5Util.md5Encode(signStr, null);
 
-        builder.addFormDataPart("timestamp",timestamp);
-        builder.addFormDataPart("data",data);
-        builder.addFormDataPart("merchant_id",merchant_id);
-        builder.addFormDataPart("sign",sign);
+        builder.addFormDataPart("timestamp", timestamp);
+        builder.addFormDataPart("data", data);
+        builder.addFormDataPart("merchant_id", merchant_id);
+        builder.addFormDataPart("sign", sign);
     }
 
     /*****
@@ -107,8 +98,8 @@ public class UploadHelper {
     };
 
 
-    public static String getAbusoluteUrl(String path){
-        return imgUrl+path;
+    public static String getAbusoluteUrl(String path) {
+        return imgUrl + path;
     }
 
 }

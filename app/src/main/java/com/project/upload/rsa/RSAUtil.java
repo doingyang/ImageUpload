@@ -190,7 +190,7 @@ public final class RSAUtil {
      */
     public static PrivateKey loadPrivateKey(String privateKeyStr) throws Exception {
         try {
-            byte[] buffer = Base64Utils.decode(privateKeyStr);
+            byte[] buffer = Base64Util.decode(privateKeyStr);
             // X509EncodedKeySpec keySpec = new X509EncodedKeySpec(buffer);
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(buffer);
             KeyFactory keyFactory = KeyFactory.getInstance(RSA);
