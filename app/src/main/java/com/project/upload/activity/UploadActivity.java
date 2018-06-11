@@ -30,13 +30,8 @@ import java.util.Map;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * @author ydy
@@ -75,7 +70,7 @@ public class UploadActivity extends AppCompatActivity {
         map.put("signKey", signKey);
         map.put("timestamp", timeStamp);
         //生成摘要
-        String signPaper = SignUtil.getSignCheckAPIInterfaceContent(map);
+        String signPaper = SignUtil.getSignContent(map);
         //MD5签名
         String md5Sign = MD5Util.md5Encode(signPaper, null);
         //请求参数

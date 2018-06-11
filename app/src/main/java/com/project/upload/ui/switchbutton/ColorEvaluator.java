@@ -3,9 +3,7 @@ package com.project.upload.ui.switchbutton;
 import android.animation.TypeEvaluator;
 
 /**
- * Author: ydy
- * Created: 2017/4/6 11:29
- * Description: 颜色鉴别器
+ * @author ydy 颜色鉴别器
  */
 
 public class ColorEvaluator implements TypeEvaluator{

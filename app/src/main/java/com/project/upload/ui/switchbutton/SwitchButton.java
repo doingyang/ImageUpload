@@ -18,9 +18,7 @@ import android.view.View;
 import com.project.upload.R;
 
 /**
- * Author: ydy
- * Created: 2017/4/6 11:29
- * Description:
+ * @author ydy
  */
 public class SwitchButton extends View implements View.OnClickListener {
 

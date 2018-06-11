@@ -8,9 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 
 /**
- * Author: ydy
- * Created: 2017/3/30 15:19
- * Description:自定义Dialog
+ * @author ydy
  */
 
 public class ConfirmDialog extends DialogFragment implements DialogInterface.OnClickListener {

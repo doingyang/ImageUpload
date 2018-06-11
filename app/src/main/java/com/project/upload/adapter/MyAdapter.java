@@ -12,12 +12,7 @@ import com.project.upload.R;
 import java.util.List;
 
 /**
- * Author: ydy
- * Created: 2017/4/1 11:15
- * Description:
- */
-
-/**
+ * @author ydy
  * 用到多个holder：使用RecyclerView.ViewHolder
  */
 public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
